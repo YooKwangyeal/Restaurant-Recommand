@@ -133,7 +133,7 @@ http://localhost:8000/search?query=홍대 맛있는 피자집 추천해줘
 ## 🏗️ 프로젝트 구조
 
 ```
-fastapi-kakao-openai/
+fastapi/
 ├── main.py              # 메인 FastAPI 애플리케이션
 ├── requirements.txt     # Python 패키지 종속성
 ├── .env                 # 환경변수 (실제 API 키)
