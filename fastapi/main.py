@@ -1,4 +1,7 @@
-from fastapi import FastAPI, HTTPException, Query  
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import os
 import requests
@@ -15,6 +18,10 @@ app = FastAPI(
     description="OpenAI와 Kakao Map API를 연동한 맛집 검색 서비스",
     version="1.0.0"
 )
+
+# 정적 파일과 템플릿 설정
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 # API 키 설정
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -235,13 +242,19 @@ JSON 형식으로 응답:
         print(f"AI 필터링 오류: {e}")
         return [{"place": place, "score": 5, "reason": "AI 분석 오류"} for place in places]
 
-@app.get("/")
-async def root():
-    """루트 엔드포인트"""
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    """웹 앱 메인 페이지"""
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/api")
+async def api_info():
+    """API 정보 엔드포인트"""
     return {
         "message": "Restaurant Search API", 
-        "version": "1.0.0",
+        "version": "2.0.0",
         "endpoints": {
+            "/": "웹 앱 메인 페이지",
             "/search": "맛집 검색 (query 파라미터 필요)",
             "/docs": "API 문서"
         }

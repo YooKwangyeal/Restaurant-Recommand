@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>맛집 추천 앱</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .header p {
+        opacity: 0.9;
+        font-size: 16px;
+      }
+
+      .search-section {
+        padding: 30px 20px;
+      }
+
+      .search-box {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 18px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 25px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .search-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 18px 30px;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+
+      .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .search-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        color: #667eea;
+      }
+
+      .loading.show {
+        display: block;
+      }
+
+      .results {
+        padding: 0 20px 20px;
+        display: none;
+      }
+
+      .results.show {
+        display: block;
+      }
+
+      .keywords {
+        background: #f8f9ff;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .keywords h3 {
+        color: #667eea;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .keyword-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .keyword-tag {
+        background: #667eea;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .recommendations {
+        margin-top: 20px;
+      }
+
+      .recommendations h3 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .place-card {
+        background: white;
+        border: 1px solid #e1e5e9;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .place-name {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      .place-category {
+        color: #667eea;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      .place-address {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 12px;
+      }
+
+      .score-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .score {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .reason {
+        color: #555;
+        font-size: 14px;
+        line-height: 1.4;
+        font-style: italic;
+      }
+
+      .examples {
+        background: #f8f9ff;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .examples h4 {
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .example-queries {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .example-query {
+        background: white;
+        border: 1px solid #e1e5e9;
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+      }
+
+      .example-query:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          margin: 0;
+          border-radius: 0;
+        }
+
+        body {
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🍽️ 맛집 추천</h1>
+        <p>AI가 추천하는 맞춤형 맛집</p>
+      </div>
+
+      <div class="search-section">
+        <div class="examples">
+          <h4>💡 검색 예시</h4>
+          <div class="example-queries">
+            <div
+              class="example-query"
+              onclick="setQuery('수원 분위기 좋은 바 추천해줘')"
+            >
+              수원 분위기 좋은 바 추천해줘
+            </div>
+            <div
+              class="example-query"
+              onclick="setQuery('강남 조용한 한식집 찾아줘')"
+            >
+              강남 조용한 한식집 찾아줘
+            </div>
+            <div
+              class="example-query"
+              onclick="setQuery('홍대 데이트하기 좋은 카페')"
+            >
+              홍대 데이트하기 좋은 카페
+            </div>
+            <div class="example-query" onclick="setQuery('인계동 삼겹살 맛집')">
+              인계동 삼겹살 맛집
+            </div>
+          </div>
+        </div>
+
+        <div class="search-box">
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="예: 수원 분위기 좋은 바 추천해줘"
+            onkeypress="handleKeyPress(event)"
+          />
+        </div>
+        <button class="search-btn" onclick="searchPlaces()" id="searchBtn">
+          🔍 맛집 찾기
+        </button>
+      </div>
+
+      <div class="loading" id="loading">
+        <p>🤖 AI가 맛집을 분석하고 있습니다...</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="keywords" id="keywords"></div>
+        <div class="recommendations" id="recommendations"></div>
+      </div>
+    </div>
+
+    <script>
+      function setQuery(query) {
+        document.getElementById("searchInput").value = query;
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          searchPlaces();
+        }
+      }
+
+      async function searchPlaces() {
+        const query = document.getElementById("searchInput").value.trim();
+        if (!query) {
+          alert("검색어를 입력해주세요!");
+          return;
+        }
+
+        const searchBtn = document.getElementById("searchBtn");
+        const loading = document.getElementById("loading");
+        const results = document.getElementById("results");
+
+        // UI 상태 변경
+        searchBtn.disabled = true;
+        searchBtn.textContent = "검색 중...";
+        loading.classList.add("show");
+        results.classList.remove("show");
+
+        try {
+          const response = await fetch(
+            `/search?query=${encodeURIComponent(query)}`
+          );
+          const data = await response.json();
+
+          if (response.ok) {
+            displayResults(data);
+          } else {
+            throw new Error(data.detail || "검색 오류가 발생했습니다.");
+          }
+        } catch (error) {
+          alert("오류: " + error.message);
+          console.error("Search error:", error);
+        } finally {
+          // UI 상태 복원
+          searchBtn.disabled = false;
+          searchBtn.textContent = "🔍 맛집 찾기";
+          loading.classList.remove("show");
+        }
+      }
+
+      function displayResults(data) {
+        const results = document.getElementById("results");
+        const keywords = document.getElementById("keywords");
+        const recommendations = document.getElementById("recommendations");
+
+        // 키워드 표시
+        const extractedKeywords = data.extracted_keywords;
+        let keywordHtml = '<h3>🎯 추출된 키워드</h3><div class="keyword-tags">';
+
+        if (extractedKeywords.region) {
+          keywordHtml += `<span class="keyword-tag">📍 ${extractedKeywords.region}</span>`;
+        }
+        if (extractedKeywords.category) {
+          keywordHtml += `<span class="keyword-tag">🍴 ${extractedKeywords.category}</span>`;
+        }
+        if (extractedKeywords.mood) {
+          keywordHtml += `<span class="keyword-tag">✨ ${extractedKeywords.mood}</span>`;
+        }
+
+        keywordHtml += "</div>";
+        keywords.innerHTML = keywordHtml;
+
+        // 추천 결과 표시
+        const filteredRecommendations = data.filtered_recommendations;
+        let recommendationsHtml = "<h3>🌟 AI 추천 맛집</h3>";
+
+        if (filteredRecommendations && filteredRecommendations.length > 0) {
+          filteredRecommendations.forEach((item, index) => {
+            const place = item.place;
+            const score = item.score;
+            const reason = item.reason;
+
+            recommendationsHtml += `
+                        <div class="place-card">
+                            <div class="place-name">${place.place_name}</div>
+                            <div class="place-category">${place.category_name}</div>
+                            <div class="place-address">${place.address_name}</div>
+                            <div class="score-section">
+                                <span class="score">${score}/10점</span>
+                            </div>
+                            <div class="reason">${reason}</div>
+                        </div>
+                    `;
+          });
+        } else {
+          recommendationsHtml += `
+                    <div class="place-card">
+                        <div class="place-name">검색 결과가 없습니다</div>
+                        <div class="reason">다른 키워드로 검색해보세요.</div>
+                    </div>
+                `;
+        }
+
+        recommendations.innerHTML = recommendationsHtml;
+        results.classList.add("show");
+      }
+    </script>
+  </body>
+</html>
