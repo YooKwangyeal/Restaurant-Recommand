@@ -42,21 +42,31 @@ class SearchResponse(BaseModel):
 
 def extract_keywords_with_openai(query: str) -> dict:
     """
-    OpenAI API를 사용하여 쿼리에서 음식 종류, 분위기, 지역 키워드를 추출합니다.
+    OpenAI API를 사용하여 쿼리에서 식당 종류, 분위기, 지역 키워드를 추출합니다.
     """
     try:
         prompt = f"""
-다음 문장에서 음식점 검색에 필요한 키워드를 추출해주세요.
+다음 문장에서 음식점/음주점 검색에 필요한 키워드를 정확히 추출해주세요.
+
 추출할 정보:
-1. 음식 종류 (예: 한식, 중식, 일식, 피자, 치킨 등)
-2. 분위기 (예: 조용한, 활기찬, 로맨틱한, 캐주얼한 등) 
-3. 지역 (예: 강남, 홍대, 명동, 서울역 등)
+1. 음식/업장 종류: 
+   - 구체적인 음식명이 있으면 그대로 사용: 삼겹살, 치킨, 피자, 파스타, 짜장면, 냉면, 김치찌개 등
+   - 업장 종류: 한식, 중식, 일식, 양식, 분식, 카페, 바, 술집, 펍, 디저트 등
+   
+2. 분위기: 조용한, 활기찬, 로맨틱한, 캐주얼한, 고급스러운, 아늑한, 모던한 등
+
+3. 지역: 시/구/동 단위의 지역명 (예: 인계동, 수원, 강남, 홍대, 명동 등)
 
 문장: "{query}"
 
-다음 JSON 형식으로 응답해주세요:
+중요 규칙:
+- 구체적인 음식명(삼겹살, 치킨, 피자 등)이 나오면 절대 일반화하지 말고 그대로 사용하세요
+- 예: "삼겹살" → "삼겹살" (한식으로 바꾸지 말 것)
+- 예: "치킨" → "치킨" (양식으로 바꾸지 말 것)
+
+JSON 형식으로만 응답:
 {{
-    "food_type": "음식 종류 또는 null",
+    "food_type": "구체적인 음식명 또는 업장 종류 또는 null",
     "atmosphere": "분위기 또는 null", 
     "location": "지역 또는 null"
 }}
@@ -66,7 +76,7 @@ def extract_keywords_with_openai(query: str) -> dict:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "당신은 음식점 검색 키워드 추출 전문가입니다. JSON 형식으로만 응답하세요."},
+                {"role": "system", "content": "당신은 음식점 검색 키워드 추출 전문가입니다. 구체적인 음식명이 언급되면 절대 일반화하지 말고 그대로 추출하세요. JSON 형식으로만 응답하세요."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.3,
@@ -99,15 +109,24 @@ def search_kakao_places(keywords: dict, original_query: str) -> dict:
         if keywords.get("food_type"):
             search_query += keywords["food_type"] + " "
         
+        # food_type이 없을 때만 "맛집" 추가
+        if not keywords.get("food_type"):
+            search_query += "맛집"
+        
         # 검색어가 없으면 원본 쿼리 사용
         if not search_query.strip():
             search_query = original_query
-        else:
-            search_query += "맛집"
         
         # Kakao API 키 확인
         if not KAKAO_API_KEY:
             raise ValueError("KAKAO_API_KEY 환경변수가 설정되지 않았습니다. .env 파일을 확인해주세요.")
+        
+        # 카테고리 코드 결정
+        category_code = "FD6"  # 기본: 음식점
+        if keywords.get("food_type"):
+            food_type = keywords["food_type"].lower()
+            if any(keyword in food_type for keyword in ["카페", "커피", "디저트"]):
+                category_code = "CE7"  # 카페
         
         # Kakao Local API 호출
         url = "https://dapi.kakao.com/v2/local/search/keyword.json"
@@ -116,7 +135,7 @@ def search_kakao_places(keywords: dict, original_query: str) -> dict:
         }
         params = {
             "query": search_query.strip(),
-            "category_group_code": "FD6",  # 음식점 카테고리
+            "category_group_code": category_code,
             "size": 15,  # 최대 15개 결과
             "sort": "accuracy"  # 정확도순 정렬
         }
@@ -152,7 +171,7 @@ async def search_restaurants(
     """
     문장을 입력받아 OpenAI로 키워드를 추출하고, Kakao Map API로 맛집을 검색합니다.
     
-    - **query**: 검색할 문장 (음식 종류, 분위기, 지역 등이 포함된 자연어)
+    - **query**: 검색할 문장 (식당 종류, 분위기, 지역 등이 포함된 자연어)
     """
     if not query.strip():
         raise HTTPException(status_code=400, detail="검색 쿼리가 비어있습니다.")
