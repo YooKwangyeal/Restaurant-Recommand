@@ -12,101 +12,206 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          "Helvetica", "Arial", sans-serif;
+        background-color: #f7f7f8;
         min-height: 100vh;
-        padding: 20px;
+        color: #202123;
       }
 
       .container {
-        max-width: 400px;
+        max-width: 768px;
         margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
         background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
       }
 
       .header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 30px 20px;
+        padding: 24px 20px;
+        border-bottom: 1px solid #e5e5e5;
         text-align: center;
+        background: white;
       }
 
       .header h1 {
-        font-size: 28px;
-        font-weight: 700;
+        font-size: 24px;
+        font-weight: 600;
+        color: #202123;
         margin-bottom: 8px;
       }
 
       .header p {
-        opacity: 0.9;
+        color: #6e6e80;
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      .chat-area {
+        flex: 1;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .welcome-section {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .welcome-title {
+        font-size: 32px;
+        font-weight: 600;
+        color: #202123;
+        margin-bottom: 16px;
+      }
+
+      .welcome-subtitle {
         font-size: 16px;
+        color: #6e6e80;
+        margin-bottom: 32px;
       }
 
-      .search-section {
-        padding: 30px 20px;
+      .examples {
+        width: 100%;
+        max-width: 600px;
+        margin-bottom: 40px;
       }
 
-      .search-box {
+      .examples h4 {
+        font-size: 16px;
+        font-weight: 500;
+        color: #202123;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      .example-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
+      }
+
+      .example-query {
+        background: white;
+        border: 1px solid #e5e5e5;
+        padding: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        color: #202123;
+        text-align: left;
+      }
+
+      .example-query:hover {
+        border-color: #10a37f;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .input-section {
+        width: 100%;
+        max-width: 600px;
         position: relative;
-        margin-bottom: 20px;
+      }
+
+      .input-container {
+        position: relative;
+        background: white;
+        border: 1px solid #e5e5e5;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+
+      .input-container:focus-within {
+        border-color: #10a37f;
+        box-shadow: 0 2px 12px rgba(16, 163, 127, 0.15);
       }
 
       .search-input {
         width: 100%;
-        padding: 18px 20px;
-        border: 2px solid #e1e5e9;
-        border-radius: 25px;
+        padding: 16px 60px 16px 20px;
+        border: none;
+        border-radius: 12px;
         font-size: 16px;
         outline: none;
-        transition: all 0.3s ease;
+        background: transparent;
+        resize: none;
+        font-family: inherit;
+        line-height: 1.5;
       }
 
-      .search-input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      .search-input::placeholder {
+        color: #9ca3af;
       }
 
-      .search-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+      .send-button {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #10a37f;
         border: none;
-        padding: 18px 30px;
-        border-radius: 25px;
-        font-size: 16px;
-        font-weight: 600;
+        border-radius: 6px;
+        width: 36px;
+        height: 36px;
         cursor: pointer;
-        width: 100%;
-        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        color: white;
       }
 
-      .search-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      .send-button:hover:not(:disabled) {
+        background: #0d8f6c;
       }
 
-      .search-btn:disabled {
-        opacity: 0.6;
+      .send-button:disabled {
+        background: #d1d5db;
         cursor: not-allowed;
-        transform: none;
       }
 
       .loading {
         display: none;
         text-align: center;
-        padding: 20px;
-        color: #667eea;
+        padding: 40px 20px;
+        color: #6e6e80;
       }
 
       .loading.show {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 2px solid #e5e5e5;
+        border-top: 2px solid #10a37f;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
 
       .results {
-        padding: 0 20px 20px;
+        width: 100%;
+        max-width: 600px;
+        margin-top: 40px;
         display: none;
       }
 
@@ -115,68 +220,103 @@
       }
 
       .keywords {
-        background: #f8f9ff;
-        border-radius: 15px;
+        background: #f9fafb;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
         padding: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 24px;
       }
 
       .keywords h3 {
-        color: #667eea;
-        margin-bottom: 15px;
-        font-size: 18px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #202123;
+        margin-bottom: 12px;
       }
 
       .keyword-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
       }
 
       .keyword-tag {
-        background: #667eea;
+        background: #10a37f;
         color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
+        padding: 6px 12px;
+        border-radius: 16px;
+        font-size: 13px;
         font-weight: 500;
       }
 
-      .recommendations {
-        margin-top: 20px;
-      }
-
       .recommendations h3 {
-        color: #333;
-        margin-bottom: 15px;
         font-size: 18px;
+        font-weight: 600;
+        color: #202123;
+        margin-bottom: 16px;
       }
 
       .place-card {
         background: white;
-        border: 1px solid #e1e5e9;
-        border-radius: 15px;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
         padding: 20px;
-        margin-bottom: 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 16px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .place-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #10a37f;
+        transform: translateY(-1px);
+      }
+
+      .place-card::after {
+        content: "📍 카카오맵에서 보기";
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 12px;
+        color: #10a37f;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .place-card:hover::after {
+        opacity: 1;
       }
 
       .place-name {
         font-size: 18px;
         font-weight: 600;
-        color: #333;
+        color: #202123;
         margin-bottom: 8px;
       }
 
       .place-category {
-        color: #667eea;
+        color: #10a37f;
         font-size: 14px;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+        font-weight: 500;
       }
 
       .place-address {
-        color: #666;
+        color: #6e6e80;
         font-size: 14px;
+        margin-bottom: 6px;
+      }
+
+      .place-phone,
+      .place-distance {
+        color: #6e6e80;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+
+      .place-phone:last-of-type,
+      .place-distance:last-of-type {
         margin-bottom: 12px;
       }
 
@@ -184,67 +324,40 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
       }
 
       .score {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #10a37f;
         color: white;
-        padding: 6px 12px;
-        border-radius: 20px;
+        padding: 4px 10px;
+        border-radius: 12px;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 12px;
       }
 
       .reason {
-        color: #555;
+        color: #4b5563;
         font-size: 14px;
-        line-height: 1.4;
+        line-height: 1.5;
         font-style: italic;
       }
 
-      .examples {
-        background: #f8f9ff;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-      }
-
-      .examples h4 {
-        color: #667eea;
-        margin-bottom: 10px;
-        font-size: 16px;
-      }
-
-      .example-queries {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .example-query {
-        background: white;
-        border: 1px solid #e1e5e9;
-        padding: 12px;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-      }
-
-      .example-query:hover {
-        border-color: #667eea;
-        background: #f0f4ff;
-      }
-
-      @media (max-width: 480px) {
+      @media (max-width: 768px) {
         .container {
           margin: 0;
-          border-radius: 0;
         }
 
-        body {
-          padding: 0;
+        .chat-area {
+          padding: 20px 16px;
+        }
+
+        .welcome-title {
+          font-size: 28px;
+        }
+
+        .example-grid {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -252,14 +365,21 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>🍽️ 맛집 추천</h1>
-        <p>AI가 추천하는 맞춤형 맛집</p>
+        <h1>맛집 추천</h1>
+        <p>AI가 분석하는 맞춤형 맛집 추천</p>
       </div>
 
-      <div class="search-section">
-        <div class="examples">
-          <h4>💡 검색 예시</h4>
-          <div class="example-queries">
+      <div class="chat-area">
+        <div class="welcome-section" id="welcomeSection">
+          <div class="welcome-title">무엇을 도와드릴까요?</div>
+          <div class="welcome-subtitle">
+            원하는 지역과 음식, 분위기를 알려주세요
+          </div>
+        </div>
+
+        <div class="examples" id="examplesSection">
+          <h4>예시</h4>
+          <div class="example-grid">
             <div
               class="example-query"
               onclick="setQuery('수원 분위기 좋은 바 추천해줘')"
@@ -284,27 +404,39 @@
           </div>
         </div>
 
-        <div class="search-box">
-          <input
-            type="text"
-            class="search-input"
-            id="searchInput"
-            placeholder="예: 수원 분위기 좋은 바 추천해줘"
-            onkeypress="handleKeyPress(event)"
-          />
+        <div class="loading" id="loading">
+          <div class="loading-spinner"></div>
+          <p>AI가 맛집을 분석하고 있습니다...</p>
         </div>
-        <button class="search-btn" onclick="searchPlaces()" id="searchBtn">
-          🔍 맛집 찾기
-        </button>
-      </div>
 
-      <div class="loading" id="loading">
-        <p>🤖 AI가 맛집을 분석하고 있습니다...</p>
-      </div>
+        <div class="results" id="results">
+          <div class="keywords" id="keywords"></div>
+          <div class="recommendations" id="recommendations"></div>
+        </div>
 
-      <div class="results" id="results">
-        <div class="keywords" id="keywords"></div>
-        <div class="recommendations" id="recommendations"></div>
+        <div class="input-section">
+          <div class="input-container">
+            <input
+              type="text"
+              class="search-input"
+              id="searchInput"
+              placeholder="원하는 음식점에 대해 설명해주세요..."
+              onkeypress="handleKeyPress(event)"
+            />
+            <button class="send-button" onclick="searchPlaces()" id="searchBtn">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94l18.5-8.5a.75.75 0 000-1.38L3.478 2.404z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -319,6 +451,15 @@
         }
       }
 
+      function openKakaoMap(placeUrl) {
+        if (placeUrl) {
+          // 새 탭에서 카카오맵 열기
+          window.open(placeUrl, "_blank");
+        } else {
+          alert("카카오맵 링크를 사용할 수 없습니다.");
+        }
+      }
+
       async function searchPlaces() {
         const query = document.getElementById("searchInput").value.trim();
         if (!query) {
@@ -329,12 +470,15 @@
         const searchBtn = document.getElementById("searchBtn");
         const loading = document.getElementById("loading");
         const results = document.getElementById("results");
+        const welcomeSection = document.getElementById("welcomeSection");
+        const examplesSection = document.getElementById("examplesSection");
 
         // UI 상태 변경
         searchBtn.disabled = true;
-        searchBtn.textContent = "검색 중...";
         loading.classList.add("show");
         results.classList.remove("show");
+        welcomeSection.style.display = "none";
+        examplesSection.style.display = "none";
 
         try {
           const response = await fetch(
@@ -350,10 +494,12 @@
         } catch (error) {
           alert("오류: " + error.message);
           console.error("Search error:", error);
+          // 오류 시 원래 상태로 복원
+          welcomeSection.style.display = "block";
+          examplesSection.style.display = "block";
         } finally {
           // UI 상태 복원
           searchBtn.disabled = false;
-          searchBtn.textContent = "🔍 맛집 찾기";
           loading.classList.remove("show");
         }
       }
@@ -365,16 +511,16 @@
 
         // 키워드 표시
         const extractedKeywords = data.extracted_keywords;
-        let keywordHtml = '<h3>🎯 추출된 키워드</h3><div class="keyword-tags">';
+        let keywordHtml = '<h3>추출된 키워드</h3><div class="keyword-tags">';
 
         if (extractedKeywords.region) {
-          keywordHtml += `<span class="keyword-tag">📍 ${extractedKeywords.region}</span>`;
+          keywordHtml += `<span class="keyword-tag">${extractedKeywords.region}</span>`;
         }
         if (extractedKeywords.category) {
-          keywordHtml += `<span class="keyword-tag">🍴 ${extractedKeywords.category}</span>`;
+          keywordHtml += `<span class="keyword-tag">${extractedKeywords.category}</span>`;
         }
         if (extractedKeywords.mood) {
-          keywordHtml += `<span class="keyword-tag">✨ ${extractedKeywords.mood}</span>`;
+          keywordHtml += `<span class="keyword-tag">${extractedKeywords.mood}</span>`;
         }
 
         keywordHtml += "</div>";
@@ -382,7 +528,7 @@
 
         // 추천 결과 표시
         const filteredRecommendations = data.filtered_recommendations;
-        let recommendationsHtml = "<h3>🌟 AI 추천 맛집</h3>";
+        let recommendationsHtml = "<h3>AI 추천 결과</h3>";
 
         if (filteredRecommendations && filteredRecommendations.length > 0) {
           filteredRecommendations.forEach((item, index) => {
@@ -390,11 +536,21 @@
             const score = item.score;
             const reason = item.reason;
 
+            // 전화번호와 거리 정보 추가
+            const phoneInfo = place.phone
+              ? `<div class="place-phone">📞 ${place.phone}</div>`
+              : "";
+            const distanceInfo = place.distance
+              ? `<div class="place-distance">📍 ${place.distance}m</div>`
+              : "";
+
             recommendationsHtml += `
-                        <div class="place-card">
+                        <div class="place-card" onclick="openKakaoMap('${place.place_url}')" title="클릭하여 카카오맵에서 보기">
                             <div class="place-name">${place.place_name}</div>
                             <div class="place-category">${place.category_name}</div>
                             <div class="place-address">${place.address_name}</div>
+                            ${phoneInfo}
+                            ${distanceInfo}
                             <div class="score-section">
                                 <span class="score">${score}/10점</span>
                             </div>
@@ -404,7 +560,7 @@
           });
         } else {
           recommendationsHtml += `
-                    <div class="place-card">
+                    <div class="place-card" style="cursor: default;">
                         <div class="place-name">검색 결과가 없습니다</div>
                         <div class="reason">다른 키워드로 검색해보세요.</div>
                     </div>
