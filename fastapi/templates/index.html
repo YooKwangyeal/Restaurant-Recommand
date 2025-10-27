@@ -7,7 +7,7 @@
     <!-- 카카오맵 API -->
     <script
       type="text/javascript"
-      src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=b95672c4d615cbd02a85a3070bb848c0&libraries=services"
+      src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=b95672c4d615cbd02a85a3070bb848c0"
     ></script>
     <style>
       * {
@@ -225,9 +225,7 @@
       }
 
       .results-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
+        display: block;
         margin-top: 24px;
       }
 
@@ -254,18 +252,9 @@
 
       #map {
         width: 100%;
-        height: 400px;
+        height: 600px;
         background-color: #f5f5f5;
         position: relative;
-      }
-
-      .recommendations-section {
-        background: white;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 20px;
-        max-height: 500px;
-        overflow-y: auto;
       }
 
       .keywords {
@@ -298,100 +287,6 @@
         font-weight: 500;
       }
 
-      .recommendations h3 {
-        font-size: 18px;
-        font-weight: 600;
-        color: #202123;
-        margin-bottom: 16px;
-      }
-
-      .place-card {
-        background: white;
-        border: 1px solid #e5e5e5;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 16px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        position: relative;
-      }
-
-      .place-card:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border-color: #10a37f;
-        transform: translateY(-1px);
-      }
-
-      .place-card::after {
-        content: "📍 카카오맵에서 보기";
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        font-size: 12px;
-        color: #10a37f;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-      }
-
-      .place-card:hover::after {
-        opacity: 1;
-      }
-
-      .place-name {
-        font-size: 18px;
-        font-weight: 600;
-        color: #202123;
-        margin-bottom: 8px;
-      }
-
-      .place-category {
-        color: #10a37f;
-        font-size: 14px;
-        margin-bottom: 6px;
-        font-weight: 500;
-      }
-
-      .place-address {
-        color: #6e6e80;
-        font-size: 14px;
-        margin-bottom: 6px;
-      }
-
-      .place-phone,
-      .place-distance {
-        color: #6e6e80;
-        font-size: 13px;
-        margin-bottom: 6px;
-      }
-
-      .place-phone:last-of-type,
-      .place-distance:last-of-type {
-        margin-bottom: 12px;
-      }
-
-      .score-section {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
-      }
-
-      .score {
-        background: #10a37f;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 12px;
-      }
-
-      .reason {
-        color: #4b5563;
-        font-size: 14px;
-        line-height: 1.5;
-        font-style: italic;
-      }
-
       @media (max-width: 768px) {
         .container {
           margin: 0;
@@ -410,7 +305,7 @@
         }
 
         .results-container {
-          grid-template-columns: 1fr;
+          display: block;
         }
 
         .results {
@@ -418,7 +313,7 @@
         }
 
         #map {
-          height: 300px;
+          height: 500px;
         }
       }
     </style>
@@ -475,12 +370,9 @@
           <div class="results-container">
             <div class="map-section">
               <div class="map-header">
-                <h3>지도에서 보기</h3>
+                <h3>🗺️ 맛집 지도</h3>
               </div>
               <div id="map"></div>
-            </div>
-            <div class="recommendations-section">
-              <div class="recommendations" id="recommendations"></div>
             </div>
           </div>
         </div>
@@ -526,33 +418,23 @@
               return;
             }
 
-            // 컨테이너가 실제로 보이는지 확인
-            const rect = container.getBoundingClientRect();
-            if (rect.width === 0 || rect.height === 0) {
-              // 컨테이너가 아직 표시되지 않았으면 잠시 후 다시 시도
-              setTimeout(initKakaoMap, 200);
-              return;
-            }
-
             const options = {
               center: new kakao.maps.LatLng(37.5665, 126.978),
               level: 5,
             };
-            map = new kakao.maps.Map(container, options);
 
-            // 여러 번 relayout 호출로 확실히 렌더링
-            setTimeout(() => {
-              if (map) {
-                map.relayout();
-                map.setCenter(new kakao.maps.LatLng(37.5665, 126.978));
-              }
-            }, 100);
+            try {
+              map = new kakao.maps.Map(container, options);
 
-            setTimeout(() => {
-              if (map) {
-                map.relayout();
-              }
-            }, 300);
+              // 지도 크기 재조정
+              setTimeout(() => {
+                if (map) {
+                  map.relayout();
+                }
+              }, 100);
+            } catch (mapError) {
+              console.error("지도 생성 오류:", mapError);
+            }
           } else {
             if ((window.mapInitAttempts || 0) < 20) {
               window.mapInitAttempts = (window.mapInitAttempts || 0) + 1;
@@ -560,7 +442,7 @@
             }
           }
         } catch (error) {
-          // 지도 초기화 실패 시 무시
+          console.error("지도 초기화 전체 오류:", error);
         }
       }
 
@@ -648,13 +530,23 @@
       }
 
       function fitMapToBounds() {
-        if (!map || !window.mapBounds) return;
+        if (!map || currentMarkers.length === 0) return;
 
-        // 지도 범위 설정
-        map.setBounds(window.mapBounds);
+        // 현재 마커들의 위치로 LatLngBounds 생성
+        const bounds = new kakao.maps.LatLngBounds();
 
-        // 범위 초기화 (다음 검색을 위해)
-        window.mapBounds = null;
+        currentMarkers.forEach((marker) => {
+          bounds.extend(marker.getPosition());
+        });
+
+        // 마커가 하나만 있으면 줌 레벨만 조정
+        if (currentMarkers.length === 1) {
+          map.setCenter(currentMarkers[0].getPosition());
+          map.setLevel(3);
+        } else {
+          // 여러 마커가 있으면 모든 마커가 보이도록 범위 설정
+          map.setBounds(bounds);
+        }
       }
 
       async function searchPlaces() {
@@ -704,17 +596,24 @@
       function displayResults(data) {
         const results = document.getElementById("results");
         const keywords = document.getElementById("keywords");
-        const recommendations = document.getElementById("recommendations");
 
-        // 결과 표시 후 지도 재초기화
+        // 결과 표시
         results.classList.add("show");
 
         // 지도 컨테이너가 보이게 된 후 지도 초기화/재조정
         setTimeout(() => {
           const container = document.getElementById("map");
-          if (container && typeof kakao !== "undefined" && kakao.maps) {
+
+          if (!container) {
+            return;
+          }
+
+          if (typeof kakao === "undefined" || !kakao.maps) {
+            return;
+          }
+
+          try {
             if (!map) {
-              // 지도가 없으면 새로 생성
               const options = {
                 center: new kakao.maps.LatLng(37.5665, 126.978),
                 level: 5,
@@ -722,12 +621,11 @@
               map = new kakao.maps.Map(container, options);
             }
 
-            // 여러 번 relayout으로 확실한 렌더링
             map.relayout();
+
             setTimeout(() => {
               if (map) {
                 map.relayout();
-                map.setCenter(new kakao.maps.LatLng(37.5665, 126.978));
 
                 // 마커 표시
                 if (
@@ -738,73 +636,27 @@
                 }
               }
             }, 100);
+          } catch (error) {
+            console.error("지도 초기화 오류:", error);
           }
-        }, 200);
+        }, 300);
 
         // 키워드 표시
         const extractedKeywords = data.extracted_keywords;
-        let keywordHtml = '<h3>추출된 키워드</h3><div class="keyword-tags">';
+        let keywordHtml = '<h3>🔍 검색된 키워드</h3><div class="keyword-tags">';
 
         if (extractedKeywords.region) {
-          keywordHtml += `<span class="keyword-tag">${extractedKeywords.region}</span>`;
+          keywordHtml += `<span class="keyword-tag">📍 ${extractedKeywords.region}</span>`;
         }
         if (extractedKeywords.category) {
-          keywordHtml += `<span class="keyword-tag">${extractedKeywords.category}</span>`;
+          keywordHtml += `<span class="keyword-tag">🍽️ ${extractedKeywords.category}</span>`;
         }
         if (extractedKeywords.mood) {
-          keywordHtml += `<span class="keyword-tag">${extractedKeywords.mood}</span>`;
+          keywordHtml += `<span class="keyword-tag">🎭 ${extractedKeywords.mood}</span>`;
         }
 
         keywordHtml += "</div>";
         keywords.innerHTML = keywordHtml;
-
-        // 추천 결과 표시
-        const filteredRecommendations = data.filtered_recommendations;
-        let recommendationsHtml = "<h3>AI 추천 결과</h3>";
-
-        if (filteredRecommendations && filteredRecommendations.length > 0) {
-          filteredRecommendations.forEach((item, index) => {
-            const place = item.place;
-            const score = item.score;
-            const reason = item.reason;
-
-            // 전화번호와 거리 정보 추가
-            const phoneInfo = place.phone
-              ? `<div class="place-phone">📞 ${place.phone}</div>`
-              : "";
-            const distanceInfo = place.distance
-              ? `<div class="place-distance">📍 ${place.distance}m</div>`
-              : "";
-
-            recommendationsHtml += `
-                        <div class="place-card" onclick="openKakaoMap('${place.place_url}')" title="클릭하여 카카오맵에서 보기">
-                            <div class="place-name">${place.place_name}</div>
-                            <div class="place-category">${place.category_name}</div>
-                            <div class="place-address">${place.address_name}</div>
-                            ${phoneInfo}
-                            ${distanceInfo}
-                            <div class="score-section">
-                                <span class="score">${score}/10점</span>
-                            </div>
-                            <div class="reason">${reason}</div>
-                        </div>
-                    `;
-          });
-        } else {
-          recommendationsHtml += `
-                    <div class="place-card" style="cursor: default;">
-                        <div class="place-name">검색 결과가 없습니다</div>
-                        <div class="reason">다른 키워드로 검색해보세요.</div>
-                    </div>
-                `;
-        }
-
-        recommendations.innerHTML = recommendationsHtml;
-
-        // 지도에 마커 표시
-        if (filteredRecommendations && filteredRecommendations.length > 0) {
-          displayMarkersOnMap(filteredRecommendations);
-        }
       }
 
       function displayMarkersOnMap(filteredRecommendations) {
@@ -815,7 +667,12 @@
         // 기존 마커들 제거
         clearMarkers();
 
-        // 각 추천 장소에 대해 마커 추가
+        // 검색 결과들의 중심점 계산
+        let totalLat = 0;
+        let totalLng = 0;
+        let validPlaceCount = 0;
+
+        // 각 추천 장소에 대해 마커 추가하면서 좌표 수집
         filteredRecommendations.forEach((item, index) => {
           const place = item.place;
           const score = item.score;
@@ -824,11 +681,36 @@
           // x, y 좌표가 있는 경우에만 마커 추가
           if (place.x && place.y) {
             addMarkerToMap(place, score, reason, index);
+
+            // 중심점 계산을 위한 좌표 누적
+            totalLat += parseFloat(place.y);
+            totalLng += parseFloat(place.x);
+            validPlaceCount++;
           }
         });
 
+        // 검색 결과들의 중심점으로 지도 이동
+        if (validPlaceCount > 0 && map) {
+          const centerLat = totalLat / validPlaceCount;
+          const centerLng = totalLng / validPlaceCount;
+          const centerPosition = new kakao.maps.LatLng(centerLat, centerLng);
+
+          map.setCenter(centerPosition);
+
+          // 검색 결과가 여러 개인 경우 적절한 줌 레벨 설정
+          if (validPlaceCount === 1) {
+            map.setLevel(3); // 한 개면 더 가깝게
+          } else if (validPlaceCount <= 5) {
+            map.setLevel(5); // 적은 수면 중간 레벨
+          } else {
+            map.setLevel(7); // 많으면 더 넓게
+          }
+        }
+
         // 모든 마커가 보이도록 지도 범위 조정
-        fitMapToBounds();
+        setTimeout(() => {
+          fitMapToBounds();
+        }, 500);
       }
 
       function clearMarkers() {
